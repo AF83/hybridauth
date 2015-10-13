@@ -142,6 +142,7 @@ abstract class BaseFacebook
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_TIMEOUT        => 60,
     CURLOPT_USERAGENT      => 'facebook-php-3.2',
+    CURLOPT_SSL_VERIFYPEER => false
   );
 
   /**
@@ -625,6 +626,8 @@ abstract class BaseFacebook
       $params['scope'] = implode(',', $scopeParams);
     }
 
+    $currentUrl = str_replace("/fr/hybridauth/", "/hybridauth/", $currentUrl);
+
     return $this->getUrl(
       'www',
       'dialog/oauth',
@@ -797,7 +800,7 @@ abstract class BaseFacebook
     }
 
     if ($redirect_uri === null) {
-      $redirect_uri = $this->getCurrentUrl();
+      $redirect_uri = Hybrid_Auth::storage()->get( "hauth_session.Facebook.id_provider_params")["login_done"];
     }
 
     try {
